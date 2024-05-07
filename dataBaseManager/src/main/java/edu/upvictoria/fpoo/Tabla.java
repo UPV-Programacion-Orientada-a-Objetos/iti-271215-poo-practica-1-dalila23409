@@ -76,18 +76,7 @@ public class Tabla {
             escritor.write(String.join(",", headers));
             escritor.newLine();
 
-            while ((linea = lector.readLine()) != null) {
-                if (!evaluarCondicion(linea, condicion, headers)) {
-                    escritor.write(linea);
-                    escritor.newLine();
-                }
-            }
-            escritor.close();
-            lector.close();
-
-            archivoEntrada.delete();
-            archivoTemporal.renameTo(archivoEntrada);
-        } catch (IOException e) {
+           } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -132,87 +121,5 @@ public class Tabla {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void seleccionar(String directorioDeTrabajo, String nombreTabla, String columnas, String condicion) {
-        try {
-            BufferedReader lector = new BufferedReader(new FileReader(directorioDeTrabajo + "/" + nombreTabla + ".csv"));
-            String linea;
-            String[] headers = lector.readLine().split(",");
-            int[] indexes = new int[headers.length];
-            String[] columnasSolicitadas = columnas.split(",");
-            for (int i = 0; i < columnasSolicitadas.length; i++) {
-                columnasSolicitadas[i] = columnasSolicitadas[i].trim();
-            }
-
-            for (int i = 0; i < headers.length; i++) {
-                for (String columnaSolicitada : columnasSolicitadas) {
-                    if (headers[i].equals(columnaSolicitada)) {
-                        indexes[i] = 1;
-                    }
-                }
-            }
-
-            while ((linea = lector.readLine()) != null) {
-                if (condicion == null || evaluarCondicion(linea, condicion, headers)) {
-                    String[] valores = linea.split(",");
-                    for (int i = 0; i < indexes.length; i++) {
-                        if (indexes[i] == 1) {
-                            System.out.print(valores[i]);
-                            System.out.print(",");
-                        }
-                    }
-                    System.out.println();
-                }
-            }
-            lector.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static boolean evaluarCondicion(String linea, String condicion, String[] headers) {
-        String[] partes = condicion.split("AND|and|OR|or");
-        boolean resultado = true;
-        for (String parte : partes) {
-            if (parte.contains("=")) {
-                String[] expresion = parte.split("=");
-                String columna = expresion[0].trim();
-                String valor = expresion[1].trim();
-                int indice = -1;
-                for (int i = 0; i < headers.length; i++) {
-                    if (headers[i].equals(columna)) {
-                        indice = i;
-                        break;
-                    }
-                }
-                if (indice != -1) {
-                    String[] valores = linea.split(",");
-                    if (!valores[indice].trim().equals(valor)) {
-                        resultado = false;
-                        break;
-                    }
-                }
-            } else if (parte.contains("<>")) {
-                String[] expresion = parte.split("<>");
-                String columna = expresion[0].trim();
-                String valor = expresion[1].trim();
-                int indice = -1;
-                for (int i = 0; i < headers.length; i++) {
-                    if (headers[i].equals(columna)) {
-                        indice = i;
-                        break;
-                    }
-                }
-                if (indice != -1) {
-                    String[] valores = linea.split(",");
-                    if (valores[indice].trim().equals(valor)) {
-                        resultado = false;
-                        break;
-                    }
-                }
-            }
-        }
-        return resultado;
     }
 }
