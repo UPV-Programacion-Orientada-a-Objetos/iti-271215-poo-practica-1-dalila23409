@@ -1,4 +1,5 @@
 package edu.upvictoria.fpoo;
+
 import java.io.*;
 import java.util.*;
 
@@ -136,6 +137,34 @@ public class Tabla {
         }
     }
 
+    public static void seleccionar(String dirTrabajo, String nombre, String columnas, String condicion) {
+        try {
+            File archivo = new File(dirTrabajo + "/" + nombre + ".csv");
+            BufferedReader lector = new BufferedReader(new FileReader(archivo));
+
+            String linea;
+            String[] headers = lector.readLine().split(",");
+            List<Integer> indicesColumnas = obtenerIndicesColumnas(headers, columnas);
+
+            System.out.println(String.join(",", columnas.split(",")));
+
+            while ((linea = lector.readLine()) != null) {
+                if (cumpleCondicion(linea, condicion, headers)) {
+                    String[] valores = linea.split(",");
+                    List<String> valoresSeleccionados = new ArrayList<>();
+                    for (int indice : indicesColumnas) {
+                        valoresSeleccionados.add(valores[indice]);
+                    }
+                    System.out.println(String.join(",", valoresSeleccionados));
+                }
+            }
+
+            lector.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static boolean cumpleCondicion(String fila, String condicion, String[] headers) {
         if (condicion == null || condicion.isEmpty()) {
             return true;
@@ -161,5 +190,19 @@ public class Tabla {
 
         return false;
     }
-}
 
+    private static List<Integer> obtenerIndicesColumnas(String[] headers, String columnas) {
+        List<Integer> indices = new ArrayList<>();
+        String[] nombresColumnas = columnas.split(",");
+        for (String nombreColumna : nombresColumnas) {
+            String nombreCol = nombreColumna.trim();
+            for (int i = 0; i < headers.length; i++) {
+                if (headers[i].equals(nombreCol)) {
+                    indices.add(i);
+                    break;
+                }
+            }
+        }
+        return indices;
+    }
+}

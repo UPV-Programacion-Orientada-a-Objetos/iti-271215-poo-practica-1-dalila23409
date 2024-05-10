@@ -1,5 +1,6 @@
 package edu.upvictoria.fpoo;
-import java.io.*;
+
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
@@ -18,4 +19,6 @@ public class App {
         }
         scanner.close();
     }
+}
+
 

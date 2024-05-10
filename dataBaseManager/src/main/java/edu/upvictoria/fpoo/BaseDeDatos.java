@@ -1,5 +1,4 @@
 package edu.upvictoria.fpoo;
-import java.io.*;
 
 public class BaseDeDatos {
     private String dirTrabajo;
@@ -34,5 +33,9 @@ public class BaseDeDatos {
 
     public void actualizar(String nombreTabla, String[] columnas, String condicion) {
         Tabla.actualizar(dirTrabajo, nombreTabla, columnas, condicion);
+    }
+
+    public void seleccionar(String nombreTabla, String columnas, String condicion) {
+        Tabla.seleccionar(dirTrabajo, nombreTabla, columnas, condicion);
     }
 }
