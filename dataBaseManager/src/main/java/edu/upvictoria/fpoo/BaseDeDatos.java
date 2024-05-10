@@ -5,7 +5,7 @@ public class BaseDeDatos {
         this.dirTrabajo = dirTrabajo;
     }
     public BaseDeDatos() {
-        this.dirTrabajo = "ruta/del/directorio/por/defecto";
+        this.dirTrabajo = "Equipo/home/dalila/documentos/iti-271215-poo-practica-1-dalila23409";
     }
     public void usar(String ruta) {
         this.dirTrabajo = ruta;
