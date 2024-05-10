@@ -6,7 +6,7 @@ public class App {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         BaseDeDatos baseDeDatos = new BaseDeDatos();
-        InterpreteComandos interpreteComandos = new InterpreteComandos(baseDeDatos);
+        InterpretarComandos interpreteComandos = new InterpretarComandos(baseDeDatos);
 
         while (true) {
             System.out.print("SQL> ");

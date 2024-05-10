@@ -1,9 +1,9 @@
 package edu.upvictoria.fpoo;
 
-public class InterpreteComandos {
+public class InterpretarComandos {
     private BaseDeDatos baseDeDatos;
 
-    public InterpreteComandos(BaseDeDatos baseDeDatos) {
+    public InterpretarComandos(BaseDeDatos baseDeDatos) {
         this.baseDeDatos = baseDeDatos;
     }
 
