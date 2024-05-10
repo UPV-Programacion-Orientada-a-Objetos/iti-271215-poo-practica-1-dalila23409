@@ -80,12 +80,11 @@ public class Tabla {
             e.printStackTrace();
         }
     }
-
     public static void actualizar(String directorioDeTrabajo, String nombreTabla, String[] columnas, String condicion) {
         try {
             File archivoEntrada = new File(directorioDeTrabajo + "/" + nombreTabla + ".csv");
             File archivoTemporal = new File(directorioDeTrabajo + "/temp.csv");
-
+            File archivorSalida = new File (directorioDeTrabajo+"/"+nombreTabla+".csv");
             BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
             BufferedWriter escritor = new BufferedWriter(new FileWriter(archivoTemporal));
 
@@ -100,7 +99,7 @@ public class Tabla {
                     for (String columna : columnas) {
                         String[] keyValue = columna.split("=");
                         String nombreColumna = keyValue[0].trim();
-                        String valorColumna = keyValue[1].trim();
+                        String valorColumna = keyValue[2].trim();
                         for (int i = 0; i < headers.length; i++) {
                             if (headers[i].equals(nombreColumna)) {
                                 valores[i] = valorColumna;

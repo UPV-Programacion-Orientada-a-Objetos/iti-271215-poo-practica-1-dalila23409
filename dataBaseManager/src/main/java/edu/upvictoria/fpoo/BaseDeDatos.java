@@ -18,7 +18,6 @@ public class BaseDeDatos {
     public void eliminarTabla(String nombreTabla) {
         Tabla.eliminarTabla(directorioDeTrabajo, nombreTabla);
     }
-
     public void insertar(String nombreTabla, String[] valores) {
         Tabla.insertar(directorioDeTrabajo, nombreTabla, valores);
     }
@@ -31,4 +30,6 @@ public class BaseDeDatos {
     public void seleccionar(String nombreTabla, String columnas, String condicion) {
         Tabla.seleccionar(directorioDeTrabajo, nombreTabla, columnas, condicion);
     }
-}
+    public void (String nombreTabla, String columnas, String condicion) {
+
+    }
