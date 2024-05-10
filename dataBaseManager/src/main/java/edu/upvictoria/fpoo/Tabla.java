@@ -3,9 +3,9 @@ import java.io.*;
 import java.util.*;
 
 public class Tabla {
-    public static void mostrarTablas(String directorioDeTrabajo) {
-        File directorio = new File(directorioDeTrabajo);
-        File[] archivos = directorio.listFiles();
+    public static void mostrar(String dirTrabajo) {
+        File dir = new File(dirTrabajo);
+        File[] archivos = dir.listFiles();
         if (archivos != null) {
             for (File archivo : archivos) {
                 if (archivo.isFile()) {
@@ -15,12 +15,12 @@ public class Tabla {
         }
     }
 
-    public static void crearTabla(String directorioDeTrabajo, String nombreTabla, String[] columnas) {
+    public static void crear(String dirTrabajo, String nombre, String[] cols) {
         try {
-            FileWriter escritor = new FileWriter(directorioDeTrabajo + "/" + nombreTabla + ".csv");
-            for (int i = 0; i < columnas.length; i++) {
-                escritor.append(columnas[i]);
-                if (i != columnas.length - 1) {
+            FileWriter escritor = new FileWriter(dirTrabajo + "/" + nombre + ".csv");
+            for (int i = 0; i < cols.length; i++) {
+                escritor.append(cols[i]);
+                if (i != cols.length - 1) {
                     escritor.append(",");
                 }
             }
@@ -30,26 +30,26 @@ public class Tabla {
         }
     }
 
-    public static void eliminarTabla(String directorioDeTrabajo, String nombreTabla) {
-        File archivo = new File(directorioDeTrabajo + "/" + nombreTabla + ".csv");
+    public static void eliminar(String dirTrabajo, String nombre) {
+        File archivo = new File(dirTrabajo + "/" + nombre + ".csv");
         if (archivo.exists()) {
-            System.out.println("¿Seguro que desea eliminar la tabla " + nombreTabla + "? (S/N)");
+            System.out.println("¿Seguro que desea eliminar la tabla " + nombre + "? (S/N)");
             Scanner scanner = new Scanner(System.in);
             String confirmacion = scanner.nextLine().toUpperCase();
             if (confirmacion.equals("S")) {
                 archivo.delete();
-                System.out.println("La tabla " + nombreTabla + " ha sido eliminada.");
+                System.out.println("La tabla " + nombre + " ha sido eliminada.");
             } else {
                 System.out.println("Operación cancelada.");
             }
         } else {
-            System.out.println("La tabla " + nombreTabla + " no existe.");
+            System.out.println("La tabla " + nombre + " no existe.");
         }
     }
 
-    public static void insertar(String directorioDeTrabajo, String nombreTabla, String[] valores) {
+    public static void insertar(String dirTrabajo, String nombre, String[] valores) {
         try {
-            FileWriter escritor = new FileWriter(directorioDeTrabajo + "/" + nombreTabla + ".csv", true);
+            FileWriter escritor = new FileWriter(dirTrabajo + "/" + nombre + ".csv", true);
             for (int i = 0; i < valores.length; i++) {
                 escritor.append(valores[i]);
                 if (i != valores.length - 1) {
@@ -63,30 +63,13 @@ public class Tabla {
         }
     }
 
-    public static void eliminar(String directorioDeTrabajo, String nombreTabla, String condicion) {
+    public static void eliminar(String dirTrabajo, String nombre, String condicion) {
         try {
-            File archivoEntrada = new File(directorioDeTrabajo + "/" + nombreTabla + ".csv");
-            File archivoTemporal = new File(directorioDeTrabajo + "/temp.csv");
+            File archEnt = new File(dirTrabajo + "/" + nombre + ".csv");
+            File archTemp = new File(dirTrabajo + "/temp.csv");
 
-            BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
-            BufferedWriter escritor = new BufferedWriter(new FileWriter(archivoTemporal));
-
-            String linea;
-            String[] headers = lector.readLine().split(",");
-            escritor.write(String.join(",", headers));
-            escritor.newLine();
-
-           } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public static void actualizar(String directorioDeTrabajo, String nombreTabla, String[] columnas, String condicion) {
-        try {
-            File archivoEntrada = new File(directorioDeTrabajo + "/" + nombreTabla + ".csv");
-            File archivoTemporal = new File(directorioDeTrabajo + "/temp.csv");
-            File archivorSalida = new File (directorioDeTrabajo+"/"+nombreTabla+".csv");
-            BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
-            BufferedWriter escritor = new BufferedWriter(new FileWriter(archivoTemporal));
+            BufferedReader lector = new BufferedReader(new FileReader(archEnt));
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(archTemp));
 
             String linea;
             String[] headers = lector.readLine().split(",");
@@ -94,15 +77,45 @@ public class Tabla {
             escritor.newLine();
 
             while ((linea = lector.readLine()) != null) {
-                if (evaluarCondicion(linea, condicion, headers)) {
+                if (!cumpleCondicion(linea, condicion, headers)) {
+                    escritor.write(linea);
+                    escritor.newLine();
+                }
+            }
+
+            escritor.close();
+            lector.close();
+
+            archEnt.delete();
+            archTemp.renameTo(archEnt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void actualizar(String dirTrabajo, String nombre, String[] cols, String condicion) {
+        try {
+            File archEnt = new File(dirTrabajo + "/" + nombre + ".csv");
+            File archTemp = new File(dirTrabajo + "/temp.csv");
+
+            BufferedReader lector = new BufferedReader(new FileReader(archEnt));
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(archTemp));
+
+            String linea;
+            String[] headers = lector.readLine().split(",");
+            escritor.write(String.join(",", headers));
+            escritor.newLine();
+
+            while ((linea = lector.readLine()) != null) {
+                if (cumpleCondicion(linea, condicion, headers)) {
                     String[] valores = linea.split(",");
-                    for (String columna : columnas) {
-                        String[] keyValue = columna.split("=");
-                        String nombreColumna = keyValue[0].trim();
-                        String valorColumna = keyValue[2].trim();
+                    for (String col : cols) {
+                        String[] keyValue = col.split("=");
+                        String nombreCol = keyValue[0].trim();
+                        String valorCol = keyValue[1].trim();
                         for (int i = 0; i < headers.length; i++) {
-                            if (headers[i].equals(nombreColumna)) {
-                                valores[i] = valorColumna;
+                            if (headers[i].equals(nombreCol)) {
+                                valores[i] = valorCol;
                                 break;
                             }
                         }
@@ -112,13 +125,41 @@ public class Tabla {
                 escritor.write(linea);
                 escritor.newLine();
             }
+
             escritor.close();
             lector.close();
 
-            archivoEntrada.delete();
-            archivoTemporal.renameTo(archivoEntrada);
+            archEnt.delete();
+            archTemp.renameTo(archEnt);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private static boolean cumpleCondicion(String fila, String condicion, String[] headers) {
+        if (condicion == null || condicion.isEmpty()) {
+            return true;
+        }
+
+        String[] partesCondicion = condicion.split("(?i) AND |(?i) OR ");
+
+        for (String parte : partesCondicion) {
+            if (parte.contains("=")) {
+                String[] partes = parte.split("=");
+                String nombreCol = partes[0].trim();
+                String valorCol = partes[1].trim();
+                for (int i = 0; i < headers.length; i++) {
+                    if (headers[i].equals(nombreCol)) {
+                        String[] valoresFila = fila.split(",");
+                        if (valoresFila.length > i && valoresFila[i].equals(valorCol)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }
+
